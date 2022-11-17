@@ -34,6 +34,7 @@
                         <th scope="col">First Name</th>
                         <th scope="col">Last Name</th>
                         <th scope="col">Address</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,6 +52,12 @@
                             <td>
                                 <%=users[i].address%>
                             </td>
+                            <td>
+                                <a type="button" href="/edit-crud?id=<%=users[i].id%>" class="btn btn-warning">Edit</a>
+                                <a type="button" href="/delete-crud?id=<%=users[i].id%>"
+                                    class="btn btn-danger">Delete</a>
+                            </td>
+
                         </tr>
                         <%}%>
 
