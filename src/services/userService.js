@@ -104,7 +104,92 @@ let getAllUser = (userId) => {
   });
 };
 
+let hashPassword = (password) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let hashPassword = await bcrypt.hashSync(password, salt);
+      resolve(hashPassword);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+let createNewUser = (userData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let existUser = await getUserByEmail(userData.email);
+      if (existUser) {
+        resolve({
+          errCode: 1,
+          message: "Email already exists",
+        });
+      }
+      let hash = await hashPassword(userData.password);
+      await db.User.create({
+        email: userData.email,
+        password: hash,
+        firstName: userData.fname,
+        lastName: userData.lname,
+        address: userData.address,
+        phoneNumber: userData.phoneNum,
+        gender: userData.gender == "1" ? true : false,
+        roleId: userData.role,
+      });
+      resolve({
+        errCode: 0,
+        message: "Create new user success",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+let deleteUser = (userID) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({ where: { id: userID } });
+      if (user) {
+        await user.destroy();
+        resolve({
+          errCode: 0,
+          message: "Delete user success",
+        });
+      }
+    } catch (error) {}
+  });
+};
+
+let updateUser = (userData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({ where: { id: userData.id } });
+      if (user) {
+        user.firstName = userData.fname;
+        user.lastName = userData.lname;
+        user.address = userData.address;
+        await user.save();
+        resolve({
+          errCode: 0,
+          message: "Update user success",
+        });
+      } else {
+        resolve({
+          errCode: 1,
+          message: "User not found",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   handleLogin: handleLogin,
   getAllUser: getAllUser,
+  createNewUser: createNewUser,
+  deleteUser: deleteUser,
+  updateUser: updateUser,
 };
