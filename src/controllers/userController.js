@@ -11,6 +11,17 @@ let handleLogin = async (req, res) => {
   }
 };
 
+let getAllUser = async (req, res) => {
+  let id = req.body.id;
+  let result = await userService.getAllUser(id);
+  if (result.errCode === 0) {
+    return res.status(200).json(result);
+  } else {
+    return res.status(500).json(result);
+  }
+};
+
 module.exports = {
   handleLogin: handleLogin,
+  handleGetAllUser: getAllUser,
 };
